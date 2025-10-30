@@ -15,6 +15,8 @@ def paste_values(pyxl, df):
             merged_list.append(range_boundaries(str(merged[i]))[:2])
         merged_loc = pd.concat([merged_loc, pd.DataFrame({sheet: merged_list})], axis=1)
 
+    add_checkbox = ["SiteLocatedInABiodiversitySensitiveArea","SiteLocatedNearABiodiversitySensitiveArea"]
+
     for i in range(len(df)):
 
         sheet = pyxl[df["sheets"][i]]
@@ -33,7 +35,8 @@ def paste_values(pyxl, df):
                 if tuple_to_check in merged_loc[df["sheets"][i]].values.tolist(): # merged cells check
 
                     print(f"Merged detected: {tuple_to_check}; sheet: {df['sheets'][i]}")
-                    df["cell_values"][i] = [df["cell_values"][i][0]]
+                    for j in range(len(df["cell_values"][i])):
+                        df["cell_values"][i][j] = [df["cell_values"][i][j][0]] # keeping only the first value of each row
 
                     if len(df["cell_shapes"][i]) == (df["cell_shapes"][i][3]+1 - df["cell_shapes"][i][1]): # enlarged ranges check
                         for row in range(df["cell_shapes"][i][1], df["cell_shapes"][i][3] + 1):
@@ -53,6 +56,10 @@ def paste_values(pyxl, df):
                     else:
                         for j in range(df["cell_shapes"][i][3]+1 - df["cell_shapes"][i][1] - len(df["cell_values"][i])):
                             df["cell_values"][i].append([None])
+                        if df["name_ranges"][i] in add_checkbox:
+                            for j in range(len(df["cell_values"][i])):
+                                if df["cell_values"][i][j][0] is None:
+                                    df["cell_values"][i][j][0] = False
                         for row in range(df["cell_shapes"][i][1], df["cell_shapes"][i][3] + 1):
                             for col in range(df["cell_shapes"][i][0], df["cell_shapes"][i][2] + 1):
                                 sheet.cell(row=row, column=col).value = df["cell_values"][i][row - df["cell_shapes"][i][1]][col - df["cell_shapes"][i][0]]

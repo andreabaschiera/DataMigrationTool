@@ -22,7 +22,7 @@ df_new_wv = df_new_wv[df_new_wv["name_ranges"].str.contains("Hypercube") == Fals
 
 paste_values(new_wb_empty, df_new_wv)
 
-new_wb_empty.save("Template/try1.xlsx")
+new_wb_empty.save("Template/try101.xlsx")
 
 # anti_join = df_old[~df_old['name_ranges'].isin(df_new['name_ranges'])]
 # print(anti_join)
