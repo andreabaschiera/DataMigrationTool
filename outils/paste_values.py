@@ -1,7 +1,7 @@
 import pandas as pd
 from openpyxl.utils.cell import range_boundaries
 
-def paste_values(pyxl, df):
+def paste_values(pyxl, df, NR=None):
     """ Paste values from a DataFrame column into an openpyxl workbook"""
     
     sheet_names = pyxl.sheetnames
@@ -56,10 +56,11 @@ def paste_values(pyxl, df):
                     else:
                         for j in range(df["cell_shapes"][i][3]+1 - df["cell_shapes"][i][1] - len(df["cell_values"][i])):
                             df["cell_values"][i].append([None])
-                        if df["name_ranges"][i] in add_checkbox:
-                            for j in range(len(df["cell_values"][i])):
-                                if df["cell_values"][i][j][0] is None:
-                                    df["cell_values"][i][j][0] = False
+                        if NR is not None: # only for name ranges (not for missing NRs)
+                            if df["name_ranges"][i] in add_checkbox:
+                                for j in range(len(df["cell_values"][i])):
+                                    if df["cell_values"][i][j][0] is None:
+                                        df["cell_values"][i][j][0] = False
                         for row in range(df["cell_shapes"][i][1], df["cell_shapes"][i][3] + 1):
                             for col in range(df["cell_shapes"][i][0], df["cell_shapes"][i][2] + 1):
                                 sheet.cell(row=row, column=col).value = df["cell_values"][i][row - df["cell_shapes"][i][1]][col - df["cell_shapes"][i][0]]
